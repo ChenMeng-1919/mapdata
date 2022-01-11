@@ -19,14 +19,14 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/map")
+@RequestMapping("/mapdata")
 @Slf4j
-public class MapController {
+public class MapDataController {
     @Autowired
     private MapService mapService;
 
-    @RequestMapping("/data")
-    public ResponseEntity mapJson() throws IOException {
+    @RequestMapping("/coordinate")
+    public ResponseEntity getCoordinate() throws IOException {
         ClassPathResource classPathResource = new ClassPathResource("mapData.json");
         InputStream inputStream = classPathResource.getInputStream();
         byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -39,7 +39,7 @@ public class MapController {
      *
      * @return
      */
-    @RequestMapping("/fly")
+    @RequestMapping("/flydata")
     public List<MapFlyTransformer> fly() {
         List<MapFlyTransformer> mapTransformers = new ArrayList<>();
         mapService.findAllFly().forEach(item -> {
@@ -52,7 +52,7 @@ public class MapController {
      * 点点数据
      * @return
      */
-    @RequestMapping("/dot")
+    @RequestMapping("/datapoint")
     public List<MapDotTransformer> dot() {
         List<MapDotTransformer> mapTransformers = new ArrayList<>();
         mapService.findAll().forEach(item -> {

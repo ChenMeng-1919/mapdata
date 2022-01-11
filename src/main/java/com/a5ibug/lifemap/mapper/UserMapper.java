@@ -1,4 +1,4 @@
-package com.a5ibug.lifemap.dao;
+package com.a5ibug.lifemap.mapper;
 
 import java.util.List;
 

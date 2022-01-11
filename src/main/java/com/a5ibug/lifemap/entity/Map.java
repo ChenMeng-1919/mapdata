@@ -1,4 +1,4 @@
-package com.a5ibug.lifemap.pojo;
+package com.a5ibug.lifemap.entity;
 
 
 import lombok.Data;

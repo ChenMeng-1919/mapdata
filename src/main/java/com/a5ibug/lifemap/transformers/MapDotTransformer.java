@@ -1,6 +1,6 @@
 package com.a5ibug.lifemap.transformers;
 
-import com.a5ibug.lifemap.pojo.Map;
+import com.a5ibug.lifemap.entity.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

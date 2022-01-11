@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>com.a5ibug</groupId>
-    <artifactId>lifeMap</artifactId>
+    <artifactId>mapdata</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>lifeMap</name>
-    <description>lifeMap</description>
+    <name>living_data_map</name>
+    <description>LivingDataMap</description>
 
     <properties>
         <repackage.classifier/>
@@ -65,6 +65,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!--MyBatis分页插件-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.10</version>
         </dependency>
     </dependencies>
 

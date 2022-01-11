@@ -1,7 +1,7 @@
 package com.a5ibug.lifemap.service.impl;
 
-import com.a5ibug.lifemap.dao.MapMapper;
-import com.a5ibug.lifemap.pojo.Map;
+import com.a5ibug.lifemap.mapper.MapMapper;
+import com.a5ibug.lifemap.entity.Map;
 import com.a5ibug.lifemap.service.MapService;
 
 import org.springframework.stereotype.Service;

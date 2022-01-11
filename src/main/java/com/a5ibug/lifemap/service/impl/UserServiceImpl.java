@@ -1,6 +1,6 @@
 package com.a5ibug.lifemap.service.impl;
 
-import com.a5ibug.lifemap.dao.UserMapper;
+import com.a5ibug.lifemap.mapper.UserMapper;
 import com.a5ibug.lifemap.service.UserService;
 import org.springframework.stereotype.Service;
 

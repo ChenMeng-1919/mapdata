@@ -1,6 +1,6 @@
-package com.a5ibug.lifemap.dao;
+package com.a5ibug.lifemap.mapper;
 
-import com.a5ibug.lifemap.pojo.Map;
+import com.a5ibug.lifemap.entity.Map;
 
 import java.util.List;
 
