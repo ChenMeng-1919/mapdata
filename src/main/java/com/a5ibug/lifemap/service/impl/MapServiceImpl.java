@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class MapServiceImpl implements MapService {
 
-    @Resource()
+    @Resource
     private MapMapper mapMapper;
 
     @Override
