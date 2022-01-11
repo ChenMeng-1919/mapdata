@@ -3,29 +3,26 @@ package com.a5ibug.lifemap.controller;
 import com.a5ibug.lifemap.service.MapService;
 import com.a5ibug.lifemap.transformers.MapDotTransformer;
 import com.a5ibug.lifemap.transformers.MapFlyTransformer;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import org.apache.commons.io.IOUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@RestControllerAdvice
-@RequestMapping("/map")
+@RestController("/map")
 @CrossOrigin
 public class MapController {
     @Autowired
     private MapService mapService;
 
     @RequestMapping("/data")
-    public String MapJson() throws IOException {
+    public String mapJson() throws IOException {
         ClassPathResource classPathResource = new ClassPathResource("mapData.json");
         return IOUtils.toString(new InputStreamReader(classPathResource.getInputStream(), "UTF-8"));
     }
