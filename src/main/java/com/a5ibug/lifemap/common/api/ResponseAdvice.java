@@ -32,7 +32,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         if(o instanceof String){
             return objectMapper.writeValueAsString(CommonResult.success(o));
         }
-        if(o instanceof ResultCode){
+        if(o instanceof CommonResult){
             return o;
         }
         return CommonResult.success(o);
