@@ -50,6 +50,7 @@ public class MapDataController {
 
     /**
      * 点点数据
+     *
      * @return
      */
     @RequestMapping("/datapoint")

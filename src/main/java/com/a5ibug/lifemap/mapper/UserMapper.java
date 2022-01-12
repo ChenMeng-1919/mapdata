@@ -1,7 +1,9 @@
 package com.a5ibug.lifemap.mapper;
 
-import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+@Mapper
 public interface UserMapper {
 
     List findAllUser();
