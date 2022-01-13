@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 import java.util.Collections;
+import java.util.Properties;
 
 /*
  * @author: cm
@@ -20,16 +21,21 @@ public class MPG {
         /**
          * 数据库相关配置
          */
+
+        Properties properties = System.getProperties();
+        String projectPath = properties.getProperty("user.dir");
+        System.out.println("项目路径dir:"+projectPath);
+
         FastAutoGenerator.create(JDBC_URL, USERNAME, PASSWORD)
                 .globalConfig(builder -> {
                     builder.author("cm") // 设置作者
                             .fileOverride() // 覆盖已生成文件
-                            .outputDir("E:\\workspace\\my-sources\\mapdata\\src\\main\\java"); // 指定输出目录
+                            .outputDir(projectPath+"\\src\\main\\java"); // 指定输出目录
                 })
                 .packageConfig(builder -> {
-                    builder.parent("com.a5ibug") // 设置父包名
-                            .moduleName("lifemap") // 设置父包模块名
-                            .pathInfo(Collections.singletonMap(OutputFile.mapperXml, "E:\\workspace\\my-sources\\mapdata\\src\\main\\resources\\mapper")); // 设置mapperXml生成路径
+                    builder.parent("com.a5ibug") // 设置父包名，即springboot启动类所在包的上一层级
+                            .moduleName("lifemap") // 设置父包模块名,即springboot启动类所在包
+                            .pathInfo(Collections.singletonMap(OutputFile.mapperXml, projectPath+"\\src\\main\\resources\\mapper")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
                     builder.addInclude("map_data"); // 设置需要生成的表名
