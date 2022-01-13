@@ -38,8 +38,17 @@ public class MPG {
                             .pathInfo(Collections.singletonMap(OutputFile.mapperXml, projectPath+"\\src\\main\\resources\\mapper")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("map_data"); // 设置需要生成的表名
+                    builder.addInclude("map_data") // 设置需要生成的表名
+                            .entityBuilder()//选择不同的构建对象才能进行不同的策略设置
+                            .enableLombok()//开启lombok注解
+                            .enableTableFieldAnnotation()//生成字段对应数据库的注解
+                            .controllerBuilder()
+                            .enableRestStyle()//开启生成@RestController 控制器
+                            .mapperBuilder()
+                            .enableMapperAnnotation()//开启 @Mapper 注解
+                            ;
                 })
+
                 .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
                 .execute();
     }
