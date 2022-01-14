@@ -3,7 +3,10 @@ package com.a5ibug.lifemap.mpg;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -12,6 +15,7 @@ import java.util.Properties;
  * @date: Created in 2022/1/13 20:34
  * @description:
  */
+@Slf4j
 public class MPG {
     /**
      * 生成代码的表名
@@ -20,9 +24,8 @@ public class MPG {
     /**
      * 数据库相关配置
      */
-    private static final String JDBC_URL = "jdbc:mysql://8.140.29.174:3306/mapdata?characterEncoding=UTF-8&useSSL=false";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "123654";
+    private static final String DATA_SOURCE_PRO = "application-devaly.properties";
+
     /**
      * 注释显示的作者
      */
@@ -38,12 +41,25 @@ public class MPG {
 
     public static void main(String[] args) {
         /**
+         * 读取配置文件获取数据库配置信息
+         */
+        Properties dataSourceConfigPro = null;
+        try {
+            dataSourceConfigPro = PropertiesLoaderUtils.loadAllProperties(DATA_SOURCE_PRO);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.info("读取配置文件发生错误");
+        }
+        String jdbcUrl = dataSourceConfigPro.getProperty("spring.datasource.url");
+        String userName = dataSourceConfigPro.getProperty("spring.datasource.username");
+        String passWord = dataSourceConfigPro.getProperty("spring.datasource.password");
+        /**
          * 获取项目路径
          */
         Properties properties = System.getProperties();
         String projectPath = properties.getProperty("user.dir");
 
-        FastAutoGenerator.create(JDBC_URL, USERNAME, PASSWORD)
+        FastAutoGenerator.create(jdbcUrl, userName, passWord)
                 .globalConfig(builder -> {
                     builder.author(AUTHOR) // 设置作者
                             .fileOverride() // 覆盖已生成文件
