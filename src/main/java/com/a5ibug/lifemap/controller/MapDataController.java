@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -40,12 +42,14 @@ public class MapDataController {
      * @return
      */
     @RequestMapping("/flydata")
-    public List<MapFlyTransformer> fly() {
-        List<MapFlyTransformer> mapTransformers = new ArrayList<>();
+    public ResponseEntity fly() {
+        List<Map<String, String>> data = new ArrayList<>();
         mapService.findAllFly().forEach(item -> {
-            mapTransformers.add(new MapFlyTransformer(item));
+            data.add((Map<String, String>) new HashMap<>().put("from", item.getTo_lat() + "," + item.getTo_lat()));
         });
-        return mapTransformers;
+        return ResponseEntity.ok()
+                .body(data);
+
     }
 
     /**
