@@ -13,14 +13,14 @@ import java.util.Properties;
 /*
  * @author: cm
  * @date: Created in 2022/1/13 20:34
- * @description:
+ * @description:代码生成器配置类
  */
 @Slf4j
 public class MPG {
     /**
      * 生成代码的表名
      */
-    private static final String TABLE_NAME = "map_data";
+    private static final String TABLE_NAME = "user_info";
     /**
      * 数据库相关配置
      */
