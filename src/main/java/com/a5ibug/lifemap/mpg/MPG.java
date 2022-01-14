@@ -2,6 +2,7 @@ package com.a5ibug.lifemap.mpg;
 
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
+import com.baomidou.mybatisplus.generator.config.TemplateType;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -63,6 +64,7 @@ public class MPG {
                 .globalConfig(builder -> {
                     builder.author(AUTHOR) // 设置作者
                             .fileOverride() // 覆盖已生成文件
+                            //.enableSwagger()//开启swagger模式
                             .outputDir(projectPath + "\\src\\main\\java"); // 指定输出目录
                 })
                 .packageConfig(builder -> {
@@ -79,6 +81,12 @@ public class MPG {
                             .enableRestStyle()//开启生成@RestController 控制器
                             .mapperBuilder()
                             .enableMapperAnnotation();//开启 @Mapper 注解
+                })
+                .templateConfig(builder -> {
+                    builder.disable(TemplateType.CONTROLLER)
+                            .disable(TemplateType.SERVICE)
+                            .disable(TemplateType.SERVICEIMPL)
+                            .disable(TemplateType.XML);
                 })
                 .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板
                 .execute();

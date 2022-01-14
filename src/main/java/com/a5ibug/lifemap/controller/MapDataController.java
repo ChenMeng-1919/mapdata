@@ -2,7 +2,6 @@ package com.a5ibug.lifemap.controller;
 
 import com.a5ibug.lifemap.service.MapService;
 import com.a5ibug.lifemap.transformers.MapDotTransformer;
-import com.a5ibug.lifemap.transformers.MapFlyTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
