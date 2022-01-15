@@ -1,6 +1,6 @@
 package com.a5ibug.lifemap.transformers;
 
-import com.a5ibug.lifemap.entity.Map;
+import com.a5ibug.lifemap.entity.MapData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,9 +15,9 @@ public class MapDotTransformer {
     private String lat;
     private String lng;
 
-    public MapDotTransformer(Map map) {
-        this.lat = map.getTo_lat();
-        this.lng = map.getTo_lon();
+    public MapDotTransformer(MapData mapData) {
+        this.lat = mapData.getToLat();
+        this.lng = mapData.getToLon();
     }
 }
 

@@ -1,7 +1,6 @@
 package com.a5ibug.lifemap.controller;
 
 import com.a5ibug.lifemap.service.MapDataService;
-import com.a5ibug.lifemap.service.MapService;
 import com.a5ibug.lifemap.transformers.MapDotTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +18,6 @@ import java.util.Map;
 @RequestMapping("/mapdata")
 @Slf4j
 public class MapDataController {
-    @Autowired
-    private MapService mapService;
 
     @Autowired
     private MapDataService mapDataService;
@@ -43,7 +38,6 @@ public class MapDataController {
     public List<Map<String, String>> getFlyData() {
         List<Map<String, String>> flyData = mapDataService.getFlyData();
         return flyData;
-
     }
 
     /**
@@ -52,11 +46,8 @@ public class MapDataController {
      * @return
      */
     @RequestMapping("/datapoint")
-    public List<MapDotTransformer> dot() {
-        List<MapDotTransformer> mapTransformers = new ArrayList<>();
-        mapService.findAll().forEach(item -> {
-            mapTransformers.add(new MapDotTransformer(item));
-        });
-        return mapTransformers;
+    public List<MapDotTransformer> gerDot() {
+        List<MapDotTransformer> mapDotTransformers = mapDataService.gerDot();
+        return mapDotTransformers;
     }
 }

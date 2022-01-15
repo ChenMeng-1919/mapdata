@@ -5,6 +5,7 @@ import com.a5ibug.lifemap.entity.MapData;
 import com.a5ibug.lifemap.mapper.AirportsDataMapper;
 import com.a5ibug.lifemap.mapper.MapDataMapper;
 import com.a5ibug.lifemap.service.MapDataService;
+import com.a5ibug.lifemap.transformers.MapDotTransformer;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
@@ -41,7 +42,8 @@ public class MapDataServiceImpl  implements MapDataService {
 
     @Override
     public List<Map<String, String>> getFlyData() {
-        List<MapData> mapData = mapDataMapper.selectList(new QueryWrapper<>());
+        List<MapData> mapData = mapDataMapper.selectList(new QueryWrapper<MapData>()
+                .lambda().eq(MapData::getType, "0"));
         List<Map<String, String>> resultData = new ArrayList<>();
         for (MapData mapDatum : mapData) {
             HashMap<String, String> objectObjectHashMap = new HashMap<>();
@@ -50,5 +52,16 @@ public class MapDataServiceImpl  implements MapDataService {
             resultData.add(objectObjectHashMap);
         }
         return resultData;
+    }
+
+    @Override
+    public List<MapDotTransformer> gerDot() {
+        List<MapData> mapData = mapDataMapper.selectList(new QueryWrapper<>());
+        List<MapDotTransformer> mapTransformers = new ArrayList<>();
+        for (MapData mapDatum : mapData) {
+            MapDotTransformer mapDotTransformer = new MapDotTransformer(mapDatum);
+            mapTransformers.add(mapDotTransformer);
+        }
+        return mapTransformers;
     }
 }
