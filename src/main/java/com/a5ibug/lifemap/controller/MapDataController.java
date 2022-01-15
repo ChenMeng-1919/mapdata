@@ -5,6 +5,7 @@ import com.a5ibug.lifemap.transformers.MapDotTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Controller
 @CrossOrigin
 @RequestMapping("/mapdata")
 @Slf4j
@@ -23,10 +25,9 @@ public class MapDataController {
     private MapDataService mapDataService;
 
     @RequestMapping("/coordinate")
-    public ResponseEntity getCoordinate() throws IOException {
+    public byte[] getCoordinate() throws IOException {
         byte[] coordinate = mapDataService.getCoordinate();
-        return ResponseEntity.ok()
-                .body(coordinate);
+        return coordinate;
     }
 
     /**
