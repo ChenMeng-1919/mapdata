@@ -42,13 +42,7 @@ public class MapDataController {
     @RequestMapping("/flydata")
     public List<Map<String, String>> getFlyData() {
         List<Map<String, String>> flyData = mapDataService.getFlyData();
-/*        List<Map<String, String>> data = new ArrayList<>();
-        mapService.findAllFly().forEach(item -> {
-            data.add((Map<String, String>) new HashMap<>().put("from", item.getTo_lat() + "," + item.getTo_lat()));
-        });
-        return ResponseEntity.ok()
-                .body(data);*/
-        return null;
+        return flyData;
 
     }
 

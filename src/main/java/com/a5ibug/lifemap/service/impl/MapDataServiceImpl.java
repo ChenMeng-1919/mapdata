@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.io.IOUtils;
+import org.mockito.internal.invocation.RealMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -41,11 +42,13 @@ public class MapDataServiceImpl  implements MapDataService {
     @Override
     public List<Map<String, String>> getFlyData() {
         List<MapData> mapData = mapDataMapper.selectList(new QueryWrapper<>());
-     /*   List<Map<String, String>> data = new ArrayList<>();
-        mapDataMapper.li
-        mapService.findAllFly().forEach(item -> {
-            data.add((Map<String, String>) new HashMap<>().put("from", item.getTo_lat() + "," + item.getTo_lat()));
-        });*/
-        return null;
+        List<Map<String, String>> resultData = new ArrayList<>();
+        for (MapData mapDatum : mapData) {
+            HashMap<String, String> objectObjectHashMap = new HashMap<>();
+            String value = mapDatum.getToLat() + "," + mapDatum.getFromLat();
+            objectObjectHashMap.put("from", value);
+            resultData.add(objectObjectHashMap);
+        }
+        return resultData;
     }
 }
