@@ -21,7 +21,7 @@ public class MPG {
     /**
      * 生成代码的表名
      */
-    private static final String TABLE_NAME = "user_info";
+    private static final String TABLE_NAME = "airports_data";
     /**
      * 数据库相关配置
      */
@@ -84,8 +84,8 @@ public class MPG {
                 })
                 .templateConfig(builder -> {
                     builder.disable(TemplateType.CONTROLLER)
-                            .disable(TemplateType.SERVICE)
-                            .disable(TemplateType.SERVICEIMPL)
+                            //.disable(TemplateType.SERVICE)
+                            //.disable(TemplateType.SERVICEIMPL)
                             .disable(TemplateType.XML);
                 })
                 .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板

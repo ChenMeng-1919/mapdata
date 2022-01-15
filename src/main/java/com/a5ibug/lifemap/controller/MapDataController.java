@@ -1,18 +1,16 @@
 package com.a5ibug.lifemap.controller;
 
+import com.a5ibug.lifemap.service.MapDataService;
 import com.a5ibug.lifemap.service.MapService;
 import com.a5ibug.lifemap.transformers.MapDotTransformer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,13 +24,14 @@ public class MapDataController {
     @Autowired
     private MapService mapService;
 
+    @Autowired
+    private MapDataService mapDataService;
+
     @RequestMapping("/coordinate")
     public ResponseEntity getCoordinate() throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("mapData.json");
-        InputStream inputStream = classPathResource.getInputStream();
-        byte[] bytes = IOUtils.toByteArray(inputStream);
+        byte[] coordinate = mapDataService.getCoordinate();
         return ResponseEntity.ok()
-                .body(bytes);
+                .body(coordinate);
     }
 
     /**
@@ -41,13 +40,15 @@ public class MapDataController {
      * @return
      */
     @RequestMapping("/flydata")
-    public ResponseEntity fly() {
-        List<Map<String, String>> data = new ArrayList<>();
+    public List<Map<String, String>> getFlyData() {
+        List<Map<String, String>> flyData = mapDataService.getFlyData();
+/*        List<Map<String, String>> data = new ArrayList<>();
         mapService.findAllFly().forEach(item -> {
             data.add((Map<String, String>) new HashMap<>().put("from", item.getTo_lat() + "," + item.getTo_lat()));
         });
         return ResponseEntity.ok()
-                .body(data);
+                .body(data);*/
+        return null;
 
     }
 
