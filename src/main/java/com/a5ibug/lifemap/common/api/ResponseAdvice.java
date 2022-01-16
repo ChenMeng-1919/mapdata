@@ -37,8 +37,9 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             return o;
         }
         if(o instanceof byte[]){
-            return o;
+            return objectMapper.writeValueAsBytes(CommonResult.success(o));
         }
-        return CommonResult.success(o);
+        CommonResult<Object> success = CommonResult.success(o);
+        return success;
     }
 }
