@@ -41,7 +41,7 @@
                                 :autosize="{ minRows: 4}"
                                 placeholder="请输入需要查询的sql"
                                 v-model="formInline.sqlstring"
-                                clearable="true"
+                                :clearable="true"
                                 ref="inputs">
                         </el-input>
                     </el-col>
@@ -66,21 +66,15 @@
                 style="width: 100%"
                 ref="singleTable"
                 highlight-current-row
-                @current-change="handleCurrentChange">
-            <el-table-column
-                    prop="date"
-                    label="日期"
-                    width="180">
-            </el-table-column>
-            <el-table-column
-                    prop="name"
-                    label="姓名"
-                    width="180">
-            </el-table-column>
-            <el-table-column
-                    prop="address"
-                    label="地址">
-            </el-table-column>
+        >
+            <!--            @current-change="handleCurrentChange"-->
+            <template v-if="tableData.length > 0">
+                <el-table-column v-for="(item,index) in tableData[0]"
+                                 :prop='index'
+                                 :label='index'>
+                </el-table-column>
+            </template>
+
         </el-table>
     </div>
 </template>
@@ -94,7 +88,6 @@
                 formInline: {
                     sqlstring: '',
                 },
-                tableDatas: [],
                 tableData: [{
                     date: '2016-05-02',
                     name: '王小虎',
@@ -124,8 +117,14 @@
                 //发送登录请求
                 axios.post("http://localhost:8080/querydata", this.formInline).then(res => {
                     this.queryState = false;
-                    console.log(res.data);
+                    this.tableData = res.data.data;
+                }).catch(res => {
+                    if (res.response.data.code == 500) {
+                        alert("服务端错误,请检查sql语句."+res.response.data.message)
+                        this.queryState = false;
+                    }
                 });
+
             },
             download() {
                 this.queryState = true;
