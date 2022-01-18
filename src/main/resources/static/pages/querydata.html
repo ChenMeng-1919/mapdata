@@ -2,18 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ElementUi</title>
-    <!-- 引入样式 -->
-    <!--相对路径，项目未启动时可以访问-->
-    <!--<link rel="stylesheet" href="../css/elementui.css">
-    <script src="../js/vue.js"></script>
-    <script src="../js/elementui.js"></script>
-    <script src="../js/axios.min.js"></script>-->
-    <!--绝对路径，项目未启动时可以访问-->
-    <!--<link rel="stylesheet" href="/FILE_UD/static/css/elementui.css">
-    <script src="/FILE_UD/static/js/vue.js"></script>
-    <script src="/FILE_UD/static/js/elementui.js"></script>
-    <script src="/FILE_UD/static/js/axios.min.js"></script>-->
+    <title>sql查询</title>
     <!--绝对路径，项目启动后可以访问-->
     <link rel="stylesheet" href="/css/elementui.css">
     <script src="/js/vue.js"></script>
@@ -38,7 +27,7 @@
                     <el-col :span="16" :offset="4">
                         <el-input
                                 type="textarea"
-                                :autosize="{ minRows: 4}"
+                                :autosize="{ minRows: 6}"
                                 placeholder="请输入需要查询的sql"
                                 v-model="formInline.sqlstring"
                                 :clearable="true"
@@ -61,7 +50,7 @@
 
         <el-table
                 :data="tableData"
-                height="250"
+                height="450"
                 border
                 style="width: 100%"
                 ref="singleTable"
@@ -69,9 +58,9 @@
         >
             <!--            @current-change="handleCurrentChange"-->
             <template v-if="tableData.length > 0">
-                <el-table-column v-for="(item,index) in tableData[0]"
-                                 :prop='index'
-                                 :label='index'>
+                <el-table-column v-for="(item,key) in tableData[0]"
+                                 :prop='key'
+                                 :label='key'>
                 </el-table-column>
             </template>
 
@@ -88,23 +77,7 @@
                 formInline: {
                     sqlstring: '',
                 },
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄'
-                }],
+                tableData: [],
                 search: ''
             }
         },

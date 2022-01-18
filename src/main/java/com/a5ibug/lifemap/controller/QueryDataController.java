@@ -24,7 +24,7 @@ public class QueryDataController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @GetMapping("/querydata")
+    @GetMapping("/sqlquery")
     public String toIndex() {
         return "querydata";
     }
