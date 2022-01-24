@@ -110,19 +110,19 @@
                     /*data: this.fileUUID,*/
                     responseType: 'blob'
                 }).then(res => {
-                    /*const fileName = res.headers['content-disposition'].match(
+                    const fileName = res.headers['content-disposition'].match(
                         /filename=(.*)/
-                    )[1]*/
+                    )[1]
                     this.queryState = false;
                     console.log(res)
                     console.log(res.headers)
                     var blob = new Blob([res.data], {type: "application/octet-stream"});
                     if (window.navigator.msSaveOrOpenBlob) {//msSaveOrOpenBlob方法返回bool值
-                        navigator.msSaveBlob(blob, decodeURI("111.xlsx"));//本地保存
+                        navigator.msSaveBlob(blob, decodeURI(fileName));//本地保存
                     } else {
                         var link = document.createElement('a');//a标签下载
                         link.href = window.URL.createObjectURL(blob);
-                        link.download = decodeURI("222.xlsx");
+                        link.download = decodeURI(fileName);
                         link.click();
                         window.URL.revokeObjectURL(link.href);
                     }

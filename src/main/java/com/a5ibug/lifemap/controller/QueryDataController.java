@@ -67,11 +67,11 @@ public class QueryDataController {
             resultList.add(valuesList);
         }
         try {
-            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             response.setCharacterEncoding("utf-8");
             // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
             String fileName = URLEncoder.encode("下载结果", "UTF-8").replaceAll("\\+", "%20");
-            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
             // 这里需要设置不关闭流
             EasyExcel.write(response.getOutputStream())
                     // 这里放入动态头
