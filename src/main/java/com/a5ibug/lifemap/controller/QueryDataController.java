@@ -52,7 +52,7 @@ public class QueryDataController {
         list = jdbcTemplate.queryForList(sqlstring);
         log.info("sql查询成功：{}", sqlstring);
         //封装查询结果
-        List<Object> resultList = new ArrayList<>();
+        List<List<Object>> resultList = new ArrayList<>();
         //查询列名
         List<String> tableNames = null;
         if (list.size() > 0) {
@@ -73,7 +73,7 @@ public class QueryDataController {
             String fileName = URLEncoder.encode("下载结果", "UTF-8").replaceAll("\\+", "%20");
             response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
             // 这里需要设置不关闭流
-            EasyExcel.write(fileName)
+            EasyExcel.write(response.getOutputStream())
                     // 这里放入动态头
                     .head(this.head(tableNames)).sheet("下载结果")
                     // 当然这里数据也可以用 List<List<String>> 去传入
