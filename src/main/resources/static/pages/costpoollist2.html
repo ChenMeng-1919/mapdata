@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ElementUi</title>
+    <!-- 引入样式 -->
+    <!--绝对路径，项目启动后可以访问-->
+    <link rel="stylesheet" href="/css/elementui.css">
+    <script src="/js/vue.js"></script>
+    <script src="/js/vue-router.js"></script>
+    <script src="/js/elementui.js"></script>
+    <script src="/js/axios.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+
+    <router-view></router-view>
+
+</div>
+<style>
+    .el-header {
+        background-color: #307ECC;
+        color: #333;
+        text-align: center;
+        line-height: 38px;
+    }
+
+    .el-footer {
+        background-color: #EFF3F8;
+        color: #333;
+        text-align: center;
+        line-height: 50px;
+    }
+
+    .el-button {
+        background: #6FB3E0;
+    }
+</style>
+</body>
+<template id="monthtuberculosis">
+    <div>
+        <el-container>
+            <el-header height="40px" text-align: right>
+                <el-row :gutter="0">
+                    <el-col :span="3">
+                        <font color="#FFFFFF">网点分配状态列表 </font>
+                    </el-col>
+                    <el-col :span="1.9">
+                        <el-button type="primary" icon="el-icon-folder-add" size="mini">新增</el-button>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button type="primary" icon="el-icon-edit" size="mini">修改</el-button>
+                    </el-col>
+                    <el-col :span="1.9">
+                        <el-button type="primary" icon="el-icon-refresh" size="mini">刷新</el-button>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button type="primary" icon="el-icon-delete" size="mini">删除</el-button>
+                    </el-col>
+                </el-row>
+
+            </el-header>
+            <el-main>
+                <el-table
+                        :data="tableData"
+                        border
+                        style="width: 100%">
+                    <el-table-column
+                            prop="date"
+                            label="日期"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="name"
+                            label="姓名"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            prop="address"
+                            label="地址">
+                    </el-table-column>
+                </el-table>
+            </el-main>
+            <el-footer height="50px">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage4"
+                        :page-sizes="[100, 200, 300, 400]"
+                        :page-size="100"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="400">
+                </el-pagination>
+            </el-footer>
+        </el-container>
+    </div>
+</template>
+<script>
+    //定义局部用户列表组件配置对象
+    const monthtuberculosis = {
+        template: '#monthtuberculosis',//用来定义组件html内容
+        data() {
+            return {
+                tableData: [{
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1517 弄'
+                }, {
+                    date: '2016-05-01',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1519 弄'
+                }, {
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1516 弄'
+                }, {
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1516 弄'
+                }, {
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1516 弄'
+                }],
+                currentPage1: 5,
+                currentPage2: 5,
+                currentPage3: 5,
+                currentPage4: 4
+            }
+
+        },
+        methods: {
+            handleSizeChange(val) {
+                //console.log(`每页 ${r'${val}'} 条`);
+            },
+            handleCurrentChange(val) {
+                //console.log(`当前页: ${r'${val}'}`);
+            }
+        },
+    };
+    const emps = {
+        template: "<div><h3>员工管理</h3><table border='1'><tr><th>编号</th><th>姓名</th><th>年龄</th><th>生日</th><th>操作</th></tr></table></div>"
+        ,
+        methods: {
+            test() {
+                console.log(this.$route.query.deptid);
+                console.log(this.$route.query.name);
+                //this.$router.push("/emps");// 代表切换路由路径
+                //this.$router.push({path:'/users'});//路径方式切换路由
+                //this.$router.push({name:"emps"});//名称方式切换路由   [推荐]
+                this.$router.push({name: "emps"});//名称方式切换路由   [推荐]
+            },
+
+        }, created() {
+            //获取路由路径中参数  1.获取queryString(url?deptid=21)中传递参数
+            //this.$route 当前路由对象
+            //this.$router 路由管理器对象
+            //console.log("deptid: ", this.$route.query.deptid);
+            //console.log("name: ", this.$route.query.name);
+        }
+    };
+    const notfound = {
+        template: "<div><h1>当前页面访问路径错误</h1></div>"
+    };
+    //创建路由对象并定义路由规则
+    const router = new VueRouter({
+        routes: [
+            {path: '/monthtuberculosis', name: "monthtuberculosis", component: monthtuberculosis}, //用来定义具体的某个组件路由规则  path: 用来指定对应请求路径  component:指定路径对应的组件
+            {path: '/emps', name: "emps", component: emps},
+            {path: '/', redirect: '/monthtuberculosis'},
+            {path: '*', component: notfound},
+        ] //用来定义一些列规则
+    });
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+            }
+        },
+        methods: {
+
+        },
+        router: router,//用来注册路由配置
+    })
+</script>
+

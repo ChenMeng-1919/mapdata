@@ -29,6 +29,11 @@ public class QueryDataController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @GetMapping("/costpoollist2")
+    public String toPages() {
+        return "costpoollist2";
+    }
+
     @GetMapping("/sqlquery")
     public String toIndex() {
         return "querydata";
