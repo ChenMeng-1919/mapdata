@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ElementUi</title>
+    <!-- 引入样式 -->
+    <!--绝对路径，项目启动后可以访问-->
+    <link rel="stylesheet" href="/css/elementui.css">
+    <script src="/js/vue.js"></script>
+    <script src="/js/vue-router.js"></script>
+    <script src="/js/elementui.js"></script>
+    <script src="/js/axios.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <router-view></router-view>
+</div>
+<style>
+    .el-header {
+        background-color: #307ECC;
+        color: #333;
+        text-align: center;
+        line-height: 38px;
+    }
+
+    .el-footer {
+        background-color: #EFF3F8;
+        color: #333;
+        text-align: center;
+        line-height: 50px;
+    }
+
+    .el-button {
+        background: #6FB3E0;
+    }
+
+
+</style>
+</body>
+<template id="incomedisHead">
+    <div>
+        <el-container>
+            <el-header height="40px" text-align: right>
+                <el-row :gutter="0">
+                    <el-col :span="3">
+                        <font color="#FFFFFF">手工收益分配列表</font>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-folder-add" size="mini" @click="addDetails">新增
+                        </el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-edit" size="mini">修改</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-refresh" size="mini" @click="refreshData">刷新</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="deleteData">删除</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">编辑明细</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">撤回</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">通过</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">退回</el-button>
+                    </el-col>
+                </el-row>
+
+            </el-header>
+            <el-main>
+                <el-table
+                        ref="singleTable"
+                        :data="tableData"
+                        border
+                        highlight-current-row
+                        @current-change="handleCurrentChange2"
+                        style="width: 100%">
+                    <el-table-column
+                            type="index"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            property="asOfDate"
+                            label="数据日期">
+                    </el-table-column>
+                    <el-table-column
+                            property="orgId"
+                            label="机构">
+                    </el-table-column>
+                    <el-table-column
+                            property="status"
+                            label="状态">
+                    </el-table-column>
+                    <el-table-column
+                            property="createBy"
+                            label="录入人">
+                    </el-table-column>
+                    <el-table-column
+                            property="approvedBy"
+                            label="审核人">
+                    </el-table-column>
+                    <el-table-column
+                            property="description"
+                            label="摘要">
+                    </el-table-column>
+                </el-table>
+            </el-main>
+            <el-footer height="50px">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 50]"
+                        :page-size="10"
+                        background
+                        prev-text="上一页"
+                        next-text="下一页"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="PageCondition.pageCount">
+                </el-pagination>
+            </el-footer>
+        </el-container>
+    </div>
+</template>
+
+<template id="addIncomedisHead">
+    <div style="float: left; width: 100%;">
+        <el-form :model="form" :rules="rules" ref="ruleForm" label-position="left" label-width="80px">
+            <el-form-item label="数据日期">
+                <el-date-picker type="date" placeholder="选择日期" v-model="form.asOfDate" format="yyyy 年 MM 月 dd 日"
+                                value-format="yyyy-MM-dd"
+                                style="width: 250px;"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="机构">
+                <el-select
+                        v-model="form.orgId"
+                        filterable
+                        remote
+                        reserve-keyword
+                        placeholder="请输入机构号或机构名称进行搜索"
+                        :remote-method="remoteMethod"
+                        :loading="loading"
+                        style="width: 250px;">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.code"
+                            :label="item.code+item.name"
+                            :value="item.code">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="摘要" style="width: 600px;">
+                <el-input type="textarea" v-model="form.summary"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+                <el-button type="primary" @click="resetForm('ruleForm')">重置</el-button>
+                <el-button @click="returnDetailsPage">返回</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</template>
+
+<template id="incomedisDetails">
+    <div>
+        <el-container>
+            <el-header height="40px" text-align: right>
+                <el-row :gutter="0">
+                    <el-col :span="3">
+                        <font color="#FFFFFF">手工收益分配列表</font>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-folder-add" size="mini" @click="addDetails">新增
+                        </el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-edit" size="mini">修改</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-refresh" size="mini" @click="refreshData">刷新</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="deleteData">删除</el-button>
+                    </el-col>
+                </el-row>
+
+            </el-header>
+            <el-main>
+                <el-table
+                        ref="singleTable"
+                        :data="tableData"
+                        border
+                        highlight-current-row
+                        @current-change="handleCurrentChange2"
+                        style="width: 100%">
+                    <el-table-column
+                            type="index"
+                            width="50">
+                    </el-table-column>
+                    <el-table-column
+                            property="asOfDate"
+                            label="数据日期">
+                    </el-table-column>
+                    <el-table-column
+                            property="bsProductCode"
+                            label="业务系统产品">
+                    </el-table-column>
+                    <el-table-column
+                            property="allocationPeriod"
+                            label="分配期间">
+                    </el-table-column>
+                    <el-table-column
+                            property="accountCode"
+                            label="会计科目编码">
+                    </el-table-column>
+                    <el-table-column
+                            property="currency"
+                            label="币种">
+                    </el-table-column>
+                    <el-table-column
+                            property="allocationType"
+                            label="分配类型">
+                    </el-table-column>
+                    <el-table-column
+                            property="summary"
+                            label="摘要">
+                    </el-table-column>
+                    <el-table-column
+                            property="allocationPeriod"
+                            label="分配方向标识">
+                    </el-table-column>
+                    <el-table-column
+                            property="disOrgLev"
+                            label="分配机构层级">
+                    </el-table-column>
+                    <el-table-column
+                            property="disOrgCode"
+                            label="分配机构编码">
+                    </el-table-column>
+                    <el-table-column
+                            property="disLobState"
+                            label="分配条线标识">
+                    </el-table-column>
+                    <el-table-column
+                            property="disLobCode"
+                            label="分配条线编码">
+                    </el-table-column>
+                    <el-table-column
+                            property="disProdState"
+                            label="分配产品标识">
+                    </el-table-column>
+                    <el-table-column
+                            property="disProdCode"
+                            label="分配产品编码">
+                    </el-table-column>
+                    <el-table-column
+                            property="disIndicator"
+                            label="分配指标">
+                    </el-table-column>
+                    <el-table-column
+                            property="disAmount"
+                            label="分配规模（虚拟）">
+                    </el-table-column>
+                    <el-table-column
+                            property="initiatingDepartment"
+                            label="发起部门">
+                    </el-table-column>
+                    <el-table-column
+                            property="processState"
+                            label="流程标识">
+                    </el-table-column>
+                </el-table>
+            </el-main>
+            <el-footer height="50px">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 50]"
+                        :page-size="10"
+                        background
+                        prev-text="上一页"
+                        next-text="下一页"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="PageCondition.pageCount">
+                </el-pagination>
+            </el-footer>
+        </el-container>
+    </div>
+</template>
+
+<template id="addDetails">
+    <div style="float: left; width: 100%;">
+        <el-form :model="form" :rules="form" ref="ruleForm" label-position="left">
+            <el-form-item label="数据日期">
+                <el-date-picker type="date" placeholder="选择日期" v-model="form.asOfDate"
+                                style="width: 100%;"></el-date-picker>
+            </el-form-item>
+            <el-form-item label="业务系统编码" style="width: 50%;">
+                <el-input v-model="form.bsProductCode"></el-input>
+            </el-form-item>
+            <el-form-item label="会计科目编码" style="width: 50%;">
+                <el-input v-model="form.accountCode"></el-input>
+            </el-form-item>
+            <el-form-item label="币种">
+                <el-radio-group v-model="form.currency">
+                    <el-radio label="人民币"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="分配类型">
+                <el-radio-group v-model="form.allocationType">
+                    <el-radio label="收入分配"></el-radio>
+                    <el-radio label="差错更正"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="摘要">
+                <el-input type="textarea" v-model="form.summary"></el-input>
+            </el-form-item>
+            <el-form-item label="分配方向">
+                <el-radio-group v-model="form.disDirectionState">
+                    <el-radio label="分入方"></el-radio>
+                    <el-radio label="分出方"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="分配机构层级">
+                <el-select v-model="form.disOrgLev" placeholder="分配机构层级">
+                    <el-option label="总行" value="shanghai"></el-option>
+                    <el-option label="一级分行" value="beijing"></el-option>
+                    <el-option label="二级分行" value="beijing"></el-option>
+                    <el-option label="一级支行" value="beijing"></el-option>
+                    <el-option label="二级支行" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="分配机构编码" style="width: 50%;">
+                <el-input v-model="form.disOrgCode"></el-input>
+            </el-form-item>
+            <el-form-item label="分配条线标识">
+                <el-radio-group v-model="form.disLobState">
+                    <el-radio label="分入条线"></el-radio>
+                    <el-radio label="分出条线"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="分配条线编码" style="width: 50%;">
+                <el-input v-model="form.disLobCode"></el-input>
+            </el-form-item>
+            <el-form-item label="分配产品标识">
+                <el-radio-group v-model="form.disProdState">
+                    <el-radio label="分入产品"></el-radio>
+                    <el-radio label="分出产品"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="分配产品编码" style="width: 50%;">
+                <el-input v-model="form.disProdCode"></el-input>
+            </el-form-item>
+            <el-form-item label="分配指标" style="width: 50%;">
+                <el-input v-model="form.disIndicator"></el-input>
+            </el-form-item>
+            <el-form-item label="分配金额" style="width: 50%;">
+                <el-input v-model="form.disAmount"></el-input>
+            </el-form-item>
+            <el-form-item label="分配规模（虚拟）" style="width: 50%;">
+                <el-input v-model="form.disScale"></el-input>
+            </el-form-item>
+            <el-form-item label="发起部门" style="width: 50%;">
+                <el-input v-model="form.initiatingDepartment"></el-input>
+            </el-form-item>
+            <el-form-item label="流程标识" style="width: 50%;">
+                <el-input v-model="form.processState"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button type="primary">重置</el-button>
+                <el-button>返回</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</template>
+
+
+<script>
+    const incomedisHead = {
+        template: '#incomedisHead',//用来定义组件html内容
+        data() {
+            return {
+                tableData: [],
+                currentPage: 1,
+                currentRow: {},
+                PageCondition: {
+                    page: 1,
+                    rows: 10,
+                    pageCount: 0,
+                }
+            }
+        },
+        methods: {
+            //分页插件pageSize改变
+            handleSizeChange(pageSize) {
+                if (pageSize != null) {
+                    this.PageCondition.rows = pageSize;
+                }
+                this.getPage();
+            },
+            addDetails() {
+                this.$router.push({name: "addIncomedisHead"});
+            },
+            //表格当前行变动
+            handleCurrentChange(currentRow) {
+                if (currentRow != null) {
+                    this.PageCondition.page = currentRow;
+                }
+                this.getPage();
+                //console.log(`当前页: ${r'${val}'}`);
+            },
+            handleCurrentChange2(currentRow) {
+                if (currentRow != null) {
+                    this.currentRow = currentRow;
+                }
+                this.getPage();
+            },
+            refreshData() {
+                this.getPage();
+            },
+            deleteData() {
+                axios.get('/ANNE_NEW/incomedisDetails/delete.html?rowId=' + this.currentRow.rowId)
+                    .then(res => {
+                        this.getPage();
+                    });
+            },
+            getPage() {
+                axios.post('/ANNE_NEW/incomedisDetails/page.html', this.PageCondition)
+                    .then(res => {
+                        this.tableData = res.data.list;
+                        this.PageCondition.page = res.data.pageCurrent;
+                        this.PageCondition.rows = res.data.pageSize;
+                        this.PageCondition.pageCount = res.data.count;
+                    });
+            }
+        },
+        created() {
+            this.getPage();
+        }
+    };
+
+    const incomedisDetails = {
+        template: '#incomedisDetails',//用来定义组件html内容
+        data() {
+            return {
+                tableData: [],
+                currentPage: 1,
+                currentRow: {},
+                PageCondition: {
+                    page: 1,
+                    rows: 10,
+                    pageCount: 0,
+                }
+            }
+        },
+        methods: {
+            handleSizeChange(pageSize) {
+                if (pageSize != null) {
+                    this.PageCondition.rows = pageSize;
+                }
+                this.getPage();
+            },
+            addDetails() {
+                this.$router.push({name: "addDetails"});
+            },
+            handleCurrentChange(currentRow) {
+                if (currentRow != null) {
+                    this.PageCondition.page = currentRow;
+                }
+                this.getPage();
+                //console.log(`当前页: ${r'${val}'}`);
+            },
+            handleCurrentChange2(currentRow) {
+                if (currentRow != null) {
+                    this.currentRow = currentRow;
+                }
+                this.getPage();
+                //console.log(`当前页: ${r'${val}'}`);
+            },
+            refreshData() {
+                this.getPage();
+            },
+            deleteData() {
+                axios.get('/ANNE_NEW/incomedis/delete.html?rowId=' + this.currentRow.rowId)
+                    .then(res => {
+                        this.getPage();
+                        // console.log("1");
+                    });
+                //console.log("2");
+
+            },
+            getPage() {
+                axios.post('/ANNE_NEW/incomedis/page.html', this.PageCondition)
+                    .then(res => {
+                        this.tableData = res.data.message.list;
+                        this.PageCondition.page = res.data.message.pageCurrent;
+                        this.PageCondition.rows = res.data.message.pageSize;
+                        this.PageCondition.pageCount = res.data.message.count;
+                    });
+            }
+        },
+        created() {
+            this.getPage();
+        }
+    };
+
+    const addDetails = {
+        template: '#addDetails',//用来定义组件html内容
+        data() {
+            return {
+                form: {
+                    asOfDate: '',
+                    bsProductCode: '',
+                    allocationPeriod: '',
+                    accountCode: '',
+                    currency: '',
+                    allocationType: '',
+                    summary: '',
+                    disDirectionState: '',
+                    disOrgLev: '',
+                    disOrgCode: '',
+                    disLobState: '',
+                    disLobCode: '',
+                    disProdState: '',
+                    disProdCode: '',
+                    disIndicator: '',
+                    disAmount: '',
+                    disScale: ''
+                }
+            }
+        },
+        methods: {
+            onSubmit() {
+                axios.post('/ANNE_NEW/incomedis/save.html', this.form
+                )
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            returnDetailsPage() {
+                this.$router.push({name: "incomedisDetails"});
+            }
+        },
+        created() {
+
+        }
+    };
+
+    const addIncomedisHead = {
+        template: '#addIncomedisHead',//用来定义组件html内容
+        data() {
+            return {
+                options: [],
+                loading: false,
+                form: {
+                    asOfDate: '',
+                    orgId: '',
+                    summary: ''
+                },
+                rules: {
+                    asOfDate: [
+                        {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
+                    ],
+                    orgId: [
+                        {required: true, message: '请选择机构', trigger: 'change'}
+                    ],
+                    summary: [
+                        {required: true, message: '请填写摘要', trigger: 'blur'}
+                    ]
+                }
+            }
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        alert('submit!');
+                        this.$router.push({name: "incomedisHead"});
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //提交表单
+            onSubmit() {
+                axios.post('/ANNE_NEW/incomedisDetails/save.html', this.form
+                )
+                    .then(res => {
+                        console.log("成功返回");
+                        this.$router.push({name: "incomedisHead"});
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            //重置表单
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            //返回
+            returnDetailsPage() {
+                this.$router.push({name: "incomedisHead"});
+            },
+            //获取下拉框数据
+            remoteMethod(query) {
+                if (query !== '') {
+                    this.loading = true;
+                    setTimeout(() => {
+                        this.loading = false;
+                        axios.post('/ANNE_NEW/field/member/fieldMemberCombox.html?code=ORG_ID&level=1,2,3,4,5&search=' + query)
+                            .then(res => {
+                                this.options = res.data.message;
+                            });
+
+                    }, 200);
+                } else {
+                    this.options = [];
+                }
+            },
+
+        },
+        created() {
+
+        }
+    };
+
+    const notfound = {
+        template: "<div><h1>当前页面访问路径错误</h1></div>"
+    };
+    //创建路由对象并定义路由规则
+    const router = new VueRouter({
+        routes: [
+            {path: '/incomedisDetails', name: "incomedisDetails", component: incomedisDetails}, //用来定义具体的某个组件路由规则  path: 用来指定对应请求路径  component:指定路径对应的组件
+            {path: '/incomedisHead', name: "incomedisHead", component: incomedisHead},
+            {path: '/addDetails', name: "addDetails", component: addDetails},
+            {path: '/addIncomedisHead', name: "addIncomedisHead", component: addIncomedisHead},
+            {path: '/', redirect: '/incomedisHead'},
+            {path: '*', component: notfound},
+        ] //用来定义一些列规则
+    });
+    new Vue({
+        el: '#app',
+        data() {
+            return {}
+        },
+        methods: {},
+        router: router,//用来注册路由配置
+    })
+</script>
+
