@@ -51,7 +51,7 @@
                         </el-button>
                     </el-col>
                     <el-col :span="1.3">
-                        <el-button type="primary" icon="el-icon-edit" size="mini">修改</el-button>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="editDetails">修改</el-button>
                     </el-col>
                     <el-col :span="1.3">
                         <el-button type="primary" icon="el-icon-refresh" size="mini" @click="refreshData">刷新</el-button>
@@ -60,22 +60,26 @@
                         <el-button type="primary" icon="el-icon-delete" size="mini" @click="deleteData">删除</el-button>
                     </el-col>
                     <el-col :span="1.3">
-                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">编辑明细</el-button>
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="editDetail">编辑明细</el-button>
                     </el-col>
                     <el-col :span="1.3">
-                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">撤回</el-button>
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="subForApproval">提交审批
+                        </el-button>
                     </el-col>
                     <el-col :span="1.3">
-                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">通过</el-button>
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="approve">通过</el-button>
                     </el-col>
                     <el-col :span="1.3">
-                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">退回</el-button>
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="withdraw">撤回</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="sendBack">退回</el-button>
                     </el-col>
                 </el-row>
-
             </el-header>
             <el-main>
                 <el-table
+                        v-loading="loading"
                         ref="singleTable"
                         :data="tableData"
                         border
@@ -95,7 +99,7 @@
                             label="机构">
                     </el-table-column>
                     <el-table-column
-                            property="status"
+                            property="statusName"
                             label="状态">
                     </el-table-column>
                     <el-table-column
@@ -132,13 +136,14 @@
 
 <template id="addIncomedisHead">
     <div style="float: left; width: 100%;">
-        <el-form :model="form" :rules="rules" ref="ruleForm" label-position="left" label-width="80px">
-            <el-form-item label="数据日期">
-                <el-date-picker type="date" placeholder="选择日期" v-model="form.asOfDate" format="yyyy 年 MM 月 dd 日"
+        <el-form v-loading="loading2" :model="form" :rules="rules" ref="ruleForm" label-position="left"
+                 label-width="80px">
+            <el-form-item label="数据日期" prop="asOfDate">
+                <el-date-picker type="month" placeholder="选择日期" v-model="form.asOfDate" format="yyyy 年 MM 月"
                                 value-format="yyyy-MM-dd"
                                 style="width: 250px;"></el-date-picker>
             </el-form-item>
-            <el-form-item label="机构">
+            <el-form-item label="机构" prop="orgId">
                 <el-select
                         v-model="form.orgId"
                         filterable
@@ -147,22 +152,23 @@
                         placeholder="请输入机构号或机构名称进行搜索"
                         :remote-method="remoteMethod"
                         :loading="loading"
+                        clearable
                         style="width: 250px;">
                     <el-option
                             v-for="item in options"
                             :key="item.code"
                             :label="item.code+item.name"
-                            :value="item.code">
+                            :value="item.code+item.name">
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="摘要" style="width: 600px;">
-                <el-input type="textarea" v-model="form.summary"></el-input>
+            <el-form-item label="摘要" prop="description" style="width: 600px;">
+                <el-input type="textarea" v-model="form.description"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+                <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
                 <el-button type="primary" @click="resetForm('ruleForm')">重置</el-button>
-                <el-button @click="returnDetailsPage">返回</el-button>
+                <el-button type="primary" @click="returnDetailsPage">返回</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -177,17 +183,24 @@
                         <font color="#FFFFFF">手工收益分配列表</font>
                     </el-col>
                     <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-folder-add" size="mini" @click="returnDetailsPage">返回
+                        </el-button>
+                    </el-col>
+                    <!--<el-col :span="1.3">
                         <el-button type="primary" icon="el-icon-folder-add" size="mini" @click="addDetails">新增
                         </el-button>
                     </el-col>
                     <el-col :span="1.3">
                         <el-button type="primary" icon="el-icon-edit" size="mini">修改</el-button>
-                    </el-col>
+                    </el-col>-->
                     <el-col :span="1.3">
                         <el-button type="primary" icon="el-icon-refresh" size="mini" @click="refreshData">刷新</el-button>
                     </el-col>
                     <el-col :span="1.3">
                         <el-button type="primary" icon="el-icon-delete" size="mini" @click="deleteData">删除</el-button>
+                    </el-col>
+                    <el-col :span="1.3">
+                        <el-button type="primary" icon="el-icon-delete" size="mini" @click="">导入</el-button>
                     </el-col>
                 </el-row>
 
@@ -389,6 +402,7 @@
         template: '#incomedisHead',//用来定义组件html内容
         data() {
             return {
+                loading: true,
                 tableData: [],
                 currentPage: 1,
                 currentRow: {},
@@ -407,31 +421,73 @@
                 }
                 this.getPage();
             },
+            //修改
+            editDetails() {
+                if (this.currentRow.rowId == null) {
+                    this.$message({
+                        message: '请选择要修改的数据',
+                        type: 'warning'
+                    });
+                } else if (this.currentRow.statusName === "通过") {
+                    this.$message({
+                        message: '通过状态的数据不允许修改',
+                        type: 'warning'
+                    });
+                } else {
+                    this.$router.push({
+                        name: 'addIncomedisHead',
+                        /*query: {
+                            rowId: this.currentRow.rowId,
+                        }*/
+                        query: this.currentRow
+                    })
+                }
+            },
             addDetails() {
                 this.$router.push({name: "addIncomedisHead"});
             },
-            //表格当前行变动
+            //分页当前每页数据量变化
             handleCurrentChange(currentRow) {
                 if (currentRow != null) {
                     this.PageCondition.page = currentRow;
                 }
+                //重新加载页面数据
                 this.getPage();
                 //console.log(`当前页: ${r'${val}'}`);
             },
+            //获取单选选中的行信息
             handleCurrentChange2(currentRow) {
                 if (currentRow != null) {
                     this.currentRow = currentRow;
                 }
-                this.getPage();
             },
             refreshData() {
                 this.getPage();
             },
             deleteData() {
-                axios.get('/ANNE_NEW/incomedisDetails/delete.html?rowId=' + this.currentRow.rowId)
-                    .then(res => {
-                        this.getPage();
+                if (this.currentRow.rowId == null) {
+                    this.$message({
+                        message: '请选择要删除的数据',
+                        type: 'warning'
                     });
+                } else if (this.currentRow.statusName === "通过") {
+                    this.$message({
+                        message: '通过状态的数据不允许删除',
+                        type: 'warning'
+                    });
+                } else {
+                    this.$alert("确认要删除此条数据？", "消息提示", {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            if (action === 'confirm') {
+                                axios.get('/ANNE_NEW/incomedisDetails/delete.html?rowId=' + this.currentRow.rowId)
+                                    .then(res => {
+                                        this.getPage();
+                                    });
+                            }
+                        }
+                    });
+                }
             },
             getPage() {
                 axios.post('/ANNE_NEW/incomedisDetails/page.html', this.PageCondition)
@@ -440,8 +496,99 @@
                         this.PageCondition.page = res.data.pageCurrent;
                         this.PageCondition.rows = res.data.pageSize;
                         this.PageCondition.pageCount = res.data.count;
+                        this.loading = false;
                     });
-            }
+            },
+            //编辑明细
+            editDetail() {
+                this.$router.push({
+                    name: 'incomedisDetails',
+                    query: this.currentRow
+                })
+            },
+            open(message) {
+                this.$alert(message, "消息提示", {
+                    confirmButtonText: '确定',
+                    /*callback: action => {
+                        this.$message({
+                            type: 'info',
+                            message: `action: ${r'${action}'}`
+                        });
+                    }*/
+                });
+            },
+            //提交审批
+            subForApproval() {
+                this.$alert("确认要提交审批？", "消息提示", {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            axios.post('/ANNE_NEW/incomedisDetails/subForApproval.html', this.currentRow)
+                                .then(res => {
+                                    if (res.data.resultstatus === 'fail') {
+                                        this.open(res.data.message);
+                                    } else {
+                                        this.getPage();
+                                    }
+                                });
+                        }
+                    }
+                });
+            },
+            //提交审批
+            approve() {
+                this.$alert("确认要通过审批？", "消息提示", {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            axios.post('/ANNE_NEW/incomedisDetails/approve.html', this.currentRow)
+                                .then(res => {
+                                    if (res.data.resultstatus === 'fail') {
+                                        this.open(res.data.message);
+                                    } else {
+                                        this.getPage();
+                                    }
+                                });
+                        }
+                    }
+                });
+            },
+            //审批撤回
+            withdraw() {
+                this.$alert("确认要撤回吗？", "消息提示", {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            axios.post('/ANNE_NEW/incomedisDetails/withdraw.html', this.currentRow)
+                                .then(res => {
+                                    if (res.data.resultstatus === 'fail') {
+                                        this.open(res.data.message);
+                                    } else {
+                                        this.getPage();
+                                    }
+                                });
+                        }
+                    }
+                });
+            },
+            //审批回退
+            sendBack() {
+                this.$alert("确认要回退吗？", "消息提示", {
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        if (action === 'confirm') {
+                            axios.post('/ANNE_NEW/incomedisDetails/sendBack.html', this.currentRow)
+                                .then(res => {
+                                    if (res.data.resultstatus === 'fail') {
+                                        this.open(res.data.message);
+                                    } else {
+                                        this.getPage();
+                                    }
+                                });
+                        }
+                    }
+                });
+            },
         },
         created() {
             this.getPage();
@@ -463,6 +610,9 @@
             }
         },
         methods: {
+            returnDetailsPage() {
+                this.$router.push({name: "incomedisHead"});
+            },
             handleSizeChange(pageSize) {
                 if (pageSize != null) {
                     this.PageCondition.rows = pageSize;
@@ -477,17 +627,15 @@
                     this.PageCondition.page = currentRow;
                 }
                 this.getPage();
-                //console.log(`当前页: ${r'${val}'}`);
             },
             handleCurrentChange2(currentRow) {
                 if (currentRow != null) {
                     this.currentRow = currentRow;
                 }
-                this.getPage();
-                //console.log(`当前页: ${r'${val}'}`);
             },
             refreshData() {
-                this.getPage();
+                console.log(this.$route.query.rowId);
+                this.getPage(this.$route.query.rowId);
             },
             deleteData() {
                 axios.get('/ANNE_NEW/incomedis/delete.html?rowId=' + this.currentRow.rowId)
@@ -498,8 +646,8 @@
                 //console.log("2");
 
             },
-            getPage() {
-                axios.post('/ANNE_NEW/incomedis/page.html', this.PageCondition)
+            getPage(headRowId) {
+                axios.post('/ANNE_NEW/incomedis/page.html?headRowId=' + headRowId, this.PageCondition)
                     .then(res => {
                         this.tableData = res.data.message.list;
                         this.PageCondition.page = res.data.message.pageCurrent;
@@ -509,7 +657,7 @@
             }
         },
         created() {
-            this.getPage();
+            this.getPage(this.$route.query.rowId);
         }
     };
 
@@ -566,20 +714,21 @@
         data() {
             return {
                 options: [],
-                loading: false,
+                loading: true,
+                loading2: true,
                 form: {
                     asOfDate: '',
                     orgId: '',
-                    summary: ''
+                    description: ''
                 },
                 rules: {
                     asOfDate: [
-                        {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
+                        {type: 'string', required: true, message: '请选择日期', trigger: 'change'}
                     ],
                     orgId: [
                         {required: true, message: '请选择机构', trigger: 'change'}
                     ],
-                    summary: [
+                    description: [
                         {required: true, message: '请填写摘要', trigger: 'blur'}
                     ]
                 }
@@ -589,8 +738,7 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        alert('submit!');
-                        this.$router.push({name: "incomedisHead"});
+                        this.onSubmit()
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -599,15 +747,25 @@
             },
             //提交表单
             onSubmit() {
-                axios.post('/ANNE_NEW/incomedisDetails/save.html', this.form
-                )
-                    .then(res => {
-                        console.log("成功返回");
-                        this.$router.push({name: "incomedisHead"});
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                if (this.form.rowId) {
+                    axios.post('/ANNE_NEW/incomedisDetails/update.html', this.form)
+                        .then(res => {
+                            this.$router.push({name: "incomedisHead"});
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                } else {
+                    axios.post('/ANNE_NEW/incomedisDetails/save.html', this.form
+                    )
+                        .then(res => {
+                            console.log("成功返回");
+                            this.$router.push({name: "incomedisHead"});
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
             },
             //重置表单
             resetForm(formName) {
@@ -622,10 +780,10 @@
                 if (query !== '') {
                     this.loading = true;
                     setTimeout(() => {
-                        this.loading = false;
                         axios.post('/ANNE_NEW/field/member/fieldMemberCombox.html?code=ORG_ID&level=1,2,3,4,5&search=' + query)
                             .then(res => {
                                 this.options = res.data.message;
+                                this.loading = false;
                             });
 
                     }, 200);
@@ -636,7 +794,18 @@
 
         },
         created() {
-
+            /*console.log(this.$route.params);
+            console.log(this.$route.query);*/
+            //判断是否是通过修改按钮进入页面
+            if (this.$route.query.rowId) {
+                axios.get('/ANNE_NEW/incomedisDetails/getHead.html?rowId=' + this.$route.query.rowId)
+                    .then(res => {
+                        this.form = res.data;
+                        this.loading2 = false;
+                    });
+            }else {
+                this.loading2 = false;
+            }
         }
     };
 
