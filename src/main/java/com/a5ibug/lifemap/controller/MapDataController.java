@@ -1,10 +1,11 @@
 package com.a5ibug.lifemap.controller;
 
+import com.a5ibug.lifemap.LifeMapApplication;
 import com.a5ibug.lifemap.service.MapDataService;
 import com.a5ibug.lifemap.transformers.MapDotTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,5 +51,16 @@ public class MapDataController {
     public List<MapDotTransformer> gerDot() {
         List<MapDotTransformer> mapDotTransformers = mapDataService.gerDot();
         return mapDotTransformers;
+    }
+
+    @RequestMapping("/getbean")
+    public void getbean() {
+        ConfigurableApplicationContext run = LifeMapApplication.run;
+        String[] beanDefinitionNames = run.getBeanDefinitionNames();
+        int count = 0;
+        for (String beanDefinitionName : beanDefinitionNames) {
+            count++;
+            log.info("第{}个bean为"+beanDefinitionName,count);
+        }
     }
 }
