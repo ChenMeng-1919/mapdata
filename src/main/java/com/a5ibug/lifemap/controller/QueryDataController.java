@@ -45,6 +45,11 @@ public class QueryDataController {
         return "querydata";
     }
 
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+
     @RequestMapping("/querydata")
     @ResponseBody
     public List<Map<String, Object>> test1(@RequestBody FormInLineEntity form) {
